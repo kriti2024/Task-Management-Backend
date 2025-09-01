@@ -103,13 +103,30 @@ export const updateUser = async (req: Request, res: Response) => {
         role,
       },
     });
-    return res.json({
+    return res.status(201).json({
       msg: "User updated successfully",
       user,
     }); //json res dinxa updated user ko
   } catch (err) {
     return res.status(500).json({
       msg: "Error in adding user",
+      error: err,
+    });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = await prisma.user.delete({
+      where: { id: Number(id) },
+    });
+    return res.status(201).json({
+      msg: "User deleted successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      msg: "Error in deleting user",
       error: err,
     });
   }
