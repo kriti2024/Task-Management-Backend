@@ -117,9 +117,11 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
+    // id parameter extract garya from the request URL
     const { id } = req.params;
+    //delete user where id matches
     const user = await prisma.user.delete({
-      where: { id: Number(id) },
+      where: { id: Number(id) }, //string id-->is Number
     });
     return res.status(201).json({
       msg: "User deleted successfully",
