@@ -8,15 +8,65 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  username String
-  email    String
-  password String
-  role     Role   @default(MEMBER)
-}
-
 enum Role {
   ADMIN
   MEMBER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Status {
+  TO_DO
+  IN_PROGRESS
+  REVIEW
+  QA_TO_DO
+  QA_ACCEPTED
+  DONE
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  username  String
+  email     String     @unique
+  password  String
+  role      Role       @default(MEMBER)
+  image     String?
+  Activity  Activity[]
+  Task      Task[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  code        String     @unique
+  title       String
+  description String?
+  priority    Priority   @default(LOW)
+  startDate   DateTime?
+  dueDate     DateTime?
+  status      Status     @default(TO_DO)
+  userId      Int?
+  user        User?      @relation(references: [id], fields: [userId], onDelete: SetNull)
+  Activity    Activity[]
+  createdAt   DateTime   @default(now())
+  updateAt    DateTime   @updatedAt
+}
+
+model Activity {
+  id          Int      @id @default(autoincrement())
+  action      String
+  description String?
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId      Int
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId      Int?
+  beforeState Json
+  afterState  Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
