@@ -6,11 +6,10 @@ interface JwtPayload {
   role: "ADMIN" | "MEMBER";
 }
 
-// Extend Express Request globally
 declare global {
   namespace Express {
     interface Request {
-      user: JwtPayload; // required and matches JWT payload
+      user: JwtPayload;
     }
   }
 }
@@ -27,7 +26,7 @@ export const authenticate = (
     const secret = process.env.JWT_SECRET || "supersecret";
     const payload = jwt.verify(token, secret) as JwtPayload;
 
-    req.user = payload; // now type-safe
+    req.user = payload;
     next();
   } catch (err) {
     return res.status(401).json({ msg: "Invalid token" });
